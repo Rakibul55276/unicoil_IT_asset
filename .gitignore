@@ -1,0 +1,67 @@
+# Private configuration and credentials
+/config.php
+/app/config/mail_secret.php
+.env
+.env.*
+*.pfx
+*.p12
+*.pem
+*.key
+*.pvk
+
+# Runtime logs, temporary files, and backups
+/error_log
+*.log
+*.bak
+*.backup
+/tmp/
+/output/
+/app/phpqrcode/*.tmp-errors.txt
+
+# User/customer uploads (keep protected directory structure only)
+/public/uploads/
+!/public/uploads/
+/public/uploads/*
+!/public/uploads/.htaccess
+!/public/uploads/asset/
+/public/uploads/asset/*
+!/public/uploads/asset/.htaccess
+!/public/uploads/archive/
+/public/uploads/archive/*
+!/public/uploads/archive/.htaccess
+!/public/uploads/invoices/
+/public/uploads/invoices/*
+!/public/uploads/invoices/.htaccess
+
+# Obsolete duplicated server tree and generated Windows builds
+/UNICOIL-PC-Agent/server-api/
+/UNICOIL-PC-Agent/bin/
+/UNICOIL-PC-Agent/obj/
+/UNICOIL-PC-Agent/dist/
+/UNICOIL-PC-Agent/*.exe
+/UNICOIL-PC-Agent/*.zip
+
+# Generated deployment archives
+/*.zip
+
+# Customer/employee data exports; publish schema and migrations instead
+/database/central_asset_db_cpanel_full_*.sql
+/database/cpanel_full_database_*.sql
+/database/cpanel_import_directory_departments_employees.sql
+/database/it_asset_management_cpanel_clean.sql
+/database/manual-system-base.sql
+/database/seed_employee_users.sql
+/database/migrations/20260713_000006_import_directory_employees.php
+/database/mysql-recovery-*/
+/database/backups/
+/database/cpanel-ready/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+# Local promotional-video rendering runtime (generated dependency).
+/tools/video_deps/
+# Python bytecode caches are generated locally and are not project source.
+__pycache__/

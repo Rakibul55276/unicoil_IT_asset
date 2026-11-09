@@ -1,0 +1,9 @@
+Options -Indexes
+
+# User-controlled files must never be interpreted as executable content.
+RemoveHandler .php .php3 .php4 .php5 .php7 .php8 .phtml .phar .cgi .pl .py .sh
+RemoveType .php .php3 .php4 .php5 .php7 .php8 .phtml .phar .cgi .pl .py .sh
+
+<FilesMatch "(?i)\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh|bash|exe|com|bat|cmd|js|mjs|html?|svg)$">
+    Require all denied
+</FilesMatch>

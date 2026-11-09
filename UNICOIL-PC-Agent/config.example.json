@@ -1,0 +1,6 @@
+{
+  "serverUrl": "https://unicoil.online/agent-api/sync.php",
+  "apiToken": "replace-with-generated-token",
+  "deviceId": "replace-with-a-generated-uuid",
+  "assetNumber": ""
+}

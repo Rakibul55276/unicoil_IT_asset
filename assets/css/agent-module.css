@@ -1,0 +1,2 @@
+/* Compatibility loader: Agent styles live in agent-module. */
+@import url("../../agent-module/assets/css/agent-module.css");

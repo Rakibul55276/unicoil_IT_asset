@@ -1,0 +1,8 @@
+-- Simplified equipment request workflow (application-code change only)
+-- User/HR request: Department Manager -> IT Manager -> Issuer
+-- Department Head request: IT Manager -> Issuer
+-- IT Manager request: directly ready for Issuer
+-- Administrator is not an approval stage. Administrator may use controlled
+-- status override to return a pre-issuance request to Department/IT approval
+-- or forward it to Issuer. Changes are written to asset_request_event.
+-- No schema change is required because status columns are VARCHAR.

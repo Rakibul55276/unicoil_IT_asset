@@ -1,0 +1,681 @@
+:root{--shell-ink:#172033;--shell-muted:#687386;--shell-line:#e4e9f0;--shell-canvas:#f4f6f9;--shell-green:#087f5b;--shell-dark:#102a25;--shell-shadow:0 10px 28px rgba(23,32,51,.07)}html,body,body.skin-1{background:var(--shell-canvas)!important;color:var(--shell-ink);font-family:"Segoe UI",Arial,sans-serif}#navbar.navbar{height:64px;background:var(--shell-dark)!important;border:0!important;box-shadow:0 2px 14px rgba(0,0,0,.18)}#navbar .navbar-brand{height:64px;display:flex;align-items:center;padding:0 16px!important;color:#fff!important;font-size:19px;font-weight:800;text-shadow:none!important}.ace-nav>li,.ace-nav>li.light-blue,.ace-nav>li.light-blue>a{height:64px;border:0!important;background:transparent!important}.ace-nav>li>a{display:flex!important;align-items:center;color:#fff!important}.ace-nav .user-info{top:auto;color:#d1fae5}.ace-nav>li.open>a,.ace-nav>li>a:hover{background:rgba(255,255,255,.08)!important}#sidebar.sidebar{background:var(--shell-dark)!important;border:0!important;box-shadow:2px 0 12px rgba(15,23,42,.08)}.sidebar .nav-list>li{border:0!important;background:transparent!important}.sidebar .nav-list>li>a{height:44px;display:flex;align-items:center;background:transparent!important;color:#cbd5e1!important;border:0!important}.sidebar .nav-list>li>a>.menu-icon{color:#8ecfba!important}.sidebar .nav-list>li>a:hover,.sidebar .nav-list>li.open>a,.sidebar .nav-list>li.active>a{background:#17443a!important;color:#fff!important}.sidebar .nav-list>li.active>a{box-shadow:inset 4px 0 0 #34d399}.sidebar .nav-list>li .submenu{background:#0d231f!important;border:0!important}.sidebar .nav-list>li .submenu>li>a{color:#aebdb9!important;border:0!important}.sidebar .nav-list>li .submenu>li>a:hover,.sidebar .nav-list>li .submenu>li.active>a{background:#173a33!important;color:#fff!important}.sidebar .sidebar-toggle{background:#0d231f!important;border:0!important}.main-content,.main-container,.page-content{background:var(--shell-canvas)!important}.breadcrumbs{height:44px;background:#fff!important;border:0!important;border-bottom:1px solid var(--shell-line)!important;padding:0 20px;display:flex;align-items:center}.breadcrumb{margin:0!important}.breadcrumb>li>a,.breadcrumb .home-icon{color:var(--shell-green)!important}.page-content{padding:24px!important}.page-header{margin:0 0 20px!important;padding:0 0 14px!important;border-bottom:1px solid var(--shell-line)!important}.page-header h1{color:#334155!important;font-size:27px!important;font-weight:600!important}.page-header h1 small{color:#8490a2!important;font-size:14px!important}.widget-box,.panel{border:1px solid var(--shell-line)!important;border-radius:12px!important;box-shadow:var(--shell-shadow)!important;background:#fff;overflow:hidden}.widget-header,.panel-heading{background:#f8fafc!important;border:0!important;border-bottom:1px solid var(--shell-line)!important}.widget-main,.panel-body{padding:18px!important}.table>thead>tr>th{background:#f8fafc!important;color:#64748b!important;border-bottom:1px solid var(--shell-line)!important;font-size:11px;text-transform:uppercase}.table>tbody>tr>td{border-top:1px solid #edf0f4!important}.form-control{border:1px solid #cbd5e1!important;border-radius:7px!important;box-shadow:none!important}.form-control:focus{border-color:var(--shell-green)!important;box-shadow:0 0 0 3px rgba(8,127,91,.12)!important}.btn{border-radius:7px!important;text-shadow:none!important;box-shadow:none!important;font-weight:600}.btn-primary,.btn-info{background:var(--shell-green)!important;border-color:var(--shell-green)!important}.btn-success{background:#15966f!important;border-color:#15966f!important}.btn-default,.btn-white{background:#fff!important;border-color:#cbd5e1!important;color:#475569!important}.modal-content{border:0!important;border-radius:14px!important;box-shadow:0 24px 70px rgba(15,23,42,.22)!important;overflow:hidden}.footer .footer-inner .footer-content{border:0!important;background:transparent!important;color:#8490a2!important}@media(max-width:991px){.page-content{padding:16px!important}}
+
+/*
+ * ACE sizes the sidebar from document content. Short role-specific pages can
+ * therefore end above the viewport. Keep the desktop shell at viewport height
+ * so the sidebar, page canvas, and footer remain visually continuous.
+ */
+@media (min-width: 992px) {
+  #main-container.main-container,
+  .main-content,
+  .main-content-inner {
+    min-height: calc(100vh - 64px);
+  }
+
+  #sidebar.sidebar,
+  #sidebar.sidebar::before {
+    min-height: calc(100vh - 64px);
+  }
+
+  .page-content {
+    min-height: calc(100vh - 183px);
+  }
+}
+
+/*
+ * Professional UI normalization
+ * -----------------------------
+ * These rules sit above the legacy ACE/Bootstrap theme. They intentionally
+ * improve visual consistency without changing page structure or workflows.
+ */
+:root {
+  --shell-primary: #087f5b;
+  --shell-primary-dark: #056247;
+  --shell-primary-soft: #e8f5f0;
+  --shell-navy: #183153;
+  --shell-danger: #c83e4d;
+  --shell-warning: #d88913;
+  --shell-info: #2f6f9f;
+  --shell-radius: 10px;
+  --shell-radius-lg: 14px;
+  --shell-control-height: 40px;
+  /* Central typography controls for the complete authenticated UI. */
+  --shell-font-family: "Segoe UI", Arial, sans-serif;
+  --shell-font-size: 15px;
+  --shell-table-font-size: 14px;
+  --shell-table-heading-font-size: 12px;
+  --shell-small-font-size: 13px;
+}
+
+html {
+  font-size: var(--shell-font-size);
+}
+
+body.skin-1 {
+  min-width: 320px;
+  font-family: var(--shell-font-family);
+  font-size: var(--shell-font-size);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  transition: border-color .16s ease, box-shadow .16s ease,
+    background-color .16s ease, color .16s ease, transform .16s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(8, 127, 91, .2);
+  outline-offset: 2px;
+}
+
+#navbar .navbar-container {
+  padding-inline: 14px;
+}
+
+#navbar .navbar-brand small {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+.ace-nav > li > a {
+  min-width: 50px;
+  justify-content: center;
+}
+
+.ace-nav .user-info {
+  max-width: 190px;
+  line-height: 1.25;
+}
+
+.ace-nav .badge {
+  box-shadow: 0 0 0 2px var(--shell-dark);
+}
+
+.sidebar .nav-list > li > a,
+.sidebar .nav-list > li .submenu > li > a {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar .nav-list > li .submenu > li > a {
+  min-height: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.sidebar .nav-list > li .submenu > li .submenu > li > a {
+  padding-left: 44px;
+  color: #bdcbc7 !important;
+}
+
+.breadcrumbs {
+  min-height: 46px;
+  height: auto;
+}
+
+.breadcrumb {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.breadcrumb > li {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-content {
+  padding: 24px 28px 32px !important;
+}
+
+.page-content .page-content {
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  min-height: 54px;
+}
+
+.page-header h1 {
+  margin: 0 !important;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+}
+
+.page-header h1 small {
+  display: inline-block;
+  margin-left: 6px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.widget-box,
+.panel,
+.card {
+  margin-bottom: 20px;
+  border: 1px solid var(--shell-line) !important;
+  border-radius: var(--shell-radius-lg) !important;
+  background: #fff;
+  box-shadow: var(--shell-shadow) !important;
+  overflow: hidden;
+}
+
+.widget-header,
+.panel-heading,
+.card-header {
+  min-height: 48px;
+  padding: 0 16px !important;
+  display: flex;
+  align-items: center;
+  background: #fbfcfd !important;
+  color: var(--shell-navy) !important;
+  border-bottom: 1px solid var(--shell-line) !important;
+}
+
+.widget-header > .widget-title,
+.panel-title,
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5 {
+  margin: 0;
+  color: var(--shell-navy) !important;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.widget-main,
+.panel-body,
+.card-body {
+  padding: 20px !important;
+}
+
+.well {
+  border: 1px solid var(--shell-line);
+  border-radius: var(--shell-radius);
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.well:hover {
+  border-color: #b9d8cc;
+  background: #fbfefd;
+}
+
+label {
+  margin-bottom: 6px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-control {
+  min-height: var(--shell-control-height);
+  padding: 8px 11px;
+  color: #172033 !important;
+  background-color: #fff !important;
+  font-size: var(--shell-font-size);
+}
+
+textarea.form-control {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.form-control[readonly],
+.form-control[disabled],
+fieldset[disabled] .form-control {
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  cursor: not-allowed;
+}
+
+.help-block {
+  margin-top: 6px;
+  color: #718096;
+  font-size: var(--shell-small-font-size);
+  line-height: 1.45;
+}
+
+.select2-container .select2-selection--single,
+.select2-container .select2-selection--multiple {
+  min-height: var(--shell-control-height) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 38px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 38px !important;
+}
+
+.btn {
+  min-height: 36px;
+  padding: 7px 13px;
+  border-width: 1px !important;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Align filter actions with the shared 40px form-control height. */
+.filter-submit-btn {
+  min-height: var(--shell-control-height);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, .1) !important;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-xs {
+  min-height: 28px;
+  padding: 3px 8px;
+  font-size: 13px;
+}
+
+.btn-sm {
+  min-height: 32px;
+  padding: 5px 10px;
+}
+
+.btn-primary:hover,
+.btn-info:hover,
+.btn-primary:focus,
+.btn-info:focus {
+  background: var(--shell-primary-dark) !important;
+  border-color: var(--shell-primary-dark) !important;
+}
+
+.btn-danger {
+  background: var(--shell-danger) !important;
+  border-color: var(--shell-danger) !important;
+}
+
+.btn-warning {
+  background: var(--shell-warning) !important;
+  border-color: var(--shell-warning) !important;
+}
+
+.btn-link {
+  min-height: 0;
+  color: #176ea8;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.alert {
+  padding: 13px 16px;
+  border-width: 1px;
+  border-radius: var(--shell-radius);
+  line-height: 1.45;
+}
+
+.label,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.table-responsive {
+  width: 100%;
+  border: 0;
+  border-radius: var(--shell-radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  margin-bottom: 0;
+  color: #243247;
+  font-size: var(--shell-table-font-size);
+}
+
+.table > thead > tr > th {
+  padding: 11px 10px !important;
+  color: #526176 !important;
+  font-size: var(--shell-table-heading-font-size) !important;
+  font-weight: 700;
+  line-height: 1.35;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.table > tbody > tr > td {
+  padding: 11px 10px !important;
+  line-height: 1.45;
+  vertical-align: middle;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #fbfcfd;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: #f0f8f5 !important;
+}
+
+.dataTables_wrapper .row:first-child,
+.dataTables_wrapper .row:last-child {
+  padding: 12px 14px;
+  background: #f8fafc;
+}
+
+.dataTables_wrapper label {
+  margin: 0;
+  color: #526176;
+  font-size: var(--shell-small-font-size);
+}
+
+/*
+ * Report typography
+ * -----------------
+ * Report screens contain denser data than operational forms. Keep their type
+ * comfortably readable and centrally adjustable without changing every view.
+ * clamp() adds a small, controlled increase on wider screens while preserving
+ * practical table widths on laptops and tablets.
+ */
+body.report-page {
+  --report-table-font-size: clamp(14px, calc(13.5px + 0.1vw), 15.5px);
+  --report-heading-font-size: clamp(12.5px, calc(12px + 0.08vw), 13.5px);
+  --report-meta-font-size: clamp(13px, calc(12.5px + 0.06vw), 14px);
+}
+
+body.report-page .page-content .table {
+  font-size: var(--report-table-font-size) !important;
+  line-height: 1.5;
+}
+
+body.report-page .page-content .table > thead > tr > th {
+  padding: 12px 10px !important;
+  font-size: var(--report-heading-font-size) !important;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+body.report-page .page-content .table > tbody > tr > td {
+  padding: 11px 10px !important;
+  font-size: inherit;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+body.report-page .page-content .dataTables_info,
+body.report-page .page-content .dataTables_length,
+body.report-page .page-content .dataTables_filter,
+body.report-page .page-content .pagination,
+body.report-page .page-content .help-block,
+body.report-page .page-content .text-muted,
+body.report-page .page-content small {
+  font-size: var(--report-meta-font-size);
+  line-height: 1.45;
+}
+
+body.report-page .page-content .label,
+body.report-page .page-content .badge,
+body.report-page .page-content .btn-sm,
+body.report-page .page-content .btn-xs {
+  font-size: 12px;
+}
+
+.dataTables_wrapper input[type="search"],
+.dataTables_wrapper select {
+  height: 34px;
+  margin: 0 5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+  min-width: 34px;
+  min-height: 34px;
+  padding: 7px 11px;
+  color: #475569;
+  border-color: #d8e0e9;
+}
+
+.pagination > .active > a,
+.pagination > .active > span {
+  background: var(--shell-primary) !important;
+  border-color: var(--shell-primary) !important;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--shell-line);
+}
+
+.nav-tabs > li > a {
+  margin-right: 4px;
+  padding: 10px 14px;
+  color: #64748b;
+  border-radius: 8px 8px 0 0 !important;
+  font-weight: 600;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: var(--shell-primary);
+  border-color: var(--shell-line) var(--shell-line) #fff;
+  background: #fff;
+}
+
+.modal-header {
+  min-height: 56px;
+  padding: 16px 20px;
+  color: var(--shell-navy);
+  background: #f8fafc;
+  border-bottom: 1px solid var(--shell-line);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  background: #fbfcfd;
+  border-top: 1px solid var(--shell-line);
+}
+
+.dropdown-menu {
+  border: 1px solid var(--shell-line);
+  border-radius: 9px;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, .16);
+}
+
+.footer .footer-inner .footer-content {
+  padding: 18px 12px;
+  font-size: 12px;
+}
+
+.footer .action-buttons {
+  display: none;
+}
+
+/* Shared table sorting for views that do not use the DataTables component. */
+.application-sortable-table thead th.application-sort-header {
+  position: relative;
+  padding-right: 24px !important;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.application-sortable-table thead th.application-sort-header:hover,
+.application-sortable-table thead th.application-sort-header:focus {
+  color: #0b6b57;
+  background-color: #edf8f5 !important;
+  outline: 2px solid transparent;
+}
+
+.application-sortable-table thead th.application-sort-header::after {
+  content: "\21C5";
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  color: #8796a5;
+  font-size: 12px;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.application-sortable-table thead th.application-sort-header[aria-sort="ascending"]::after {
+  content: "\2191";
+  color: #0b6b57;
+}
+
+.application-sortable-table thead th.application-sort-header[aria-sort="descending"]::after {
+  content: "\2193";
+  color: #0b6b57;
+}
+
+/* The legacy employee form had no outer card and occupied only half the page. */
+#employeeForm {
+  max-width: 980px;
+}
+
+#employeeForm > .row > [class*="col-"] {
+  width: 100%;
+}
+
+#employeeForm .widget-body {
+  border: 1px solid var(--shell-line);
+  border-radius: var(--shell-radius-lg);
+  background: #fff;
+  box-shadow: var(--shell-shadow);
+}
+
+#employeeForm .widget-main {
+  padding: 24px !important;
+}
+
+@media (max-width: 991px) {
+  #navbar .navbar-container {
+    padding-inline: 4px;
+  }
+
+  #navbar .navbar-brand {
+    padding-left: 10px !important;
+  }
+
+  .page-content {
+    padding: 18px 14px 26px !important;
+  }
+
+  .page-header {
+    align-items: flex-start;
+  }
+
+  .page-header h1 {
+    font-size: 23px !important;
+  }
+
+  .page-header h1 small {
+    display: block;
+    margin: 5px 0 0;
+  }
+
+  .widget-main,
+  .panel-body,
+  .card-body {
+    padding: 15px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #navbar .navbar-brand small {
+    font-size: 15px;
+  }
+
+  .ace-nav .user-info {
+    display: none;
+  }
+
+  .breadcrumbs {
+    padding-inline: 12px;
+  }
+
+  .breadcrumb > li {
+    max-width: 220px;
+  }
+
+  .btn-group > .btn,
+  .form-actions .btn {
+    margin-bottom: 6px;
+  }
+}
+
+@media print {
+  #navbar,
+  #sidebar,
+  .breadcrumbs,
+  .footer,
+  .btn-scroll-up {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  .page-content {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .widget-box,
+  .panel,
+  .card {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}

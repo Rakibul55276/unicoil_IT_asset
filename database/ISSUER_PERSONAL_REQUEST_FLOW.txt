@@ -1,0 +1,9 @@
+Issuer personal request rule
+============================
+
+- An active Issuer account linked to an employee can select New Equipment Request.
+- The request target is SELF, so requested_for is the Issuer employee record.
+- Approval follows the employee role rules already configured.
+- When approved, the requesting Issuer cannot issue their own assets.
+- A different active Issuer must perform issuance.
+- The requesting Issuer then accepts the issued assets as receiver.
