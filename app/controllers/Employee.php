@@ -191,6 +191,7 @@ class Employee extends Controller
             ["ADMINISTRATOR"],
             "Only an Administrator can delete employee records.",
         );
+        $this->requirePostDeleteToken();
         if ($this->empModel->deleteData($id) > 0) {
             Flasher::setMessage("Employee", "Deleted", "success");
         } else {

@@ -95,6 +95,7 @@ class Location extends Controller
             ["ADMINISTRATOR"],
             "Only an Administrator can delete locations.",
         );
+        $this->requirePostDeleteToken();
         if ($this->model->deleteData($id) > 0) {
             Flasher::setMessage("Location", "Deleted successfully", "success");
         } else {

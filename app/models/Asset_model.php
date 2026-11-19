@@ -9,6 +9,61 @@ class Asset_model
         $this->db = new Database();
     }
 
+    /**
+     * Ownership check for assignment (ISSUE) and return (RETURN) documents.
+     * True when the user is the custodian, heads the custodian department, or
+     * raised, receives, or acted on the linked equipment request.
+     */
+    public function canAccessTransactionDocument(
+        string $type,
+        int $documentId,
+        string $username,
+        int $employeeId
+    ): bool {
+        if ($documentId < 1 || $username === "") {
+            return false;
+        }
+        $issueSource = $type === "RETURN"
+            ? "(SELECT issue_id FROM asset_return WHERE return_id=:documentId)"
+            : ":documentId";
+        $this->db->query("SELECT 1
+            FROM asset_issue i
+            LEFT JOIN department d ON d.deptId=i.deptId
+            WHERE i.issue_id={$issueSource}
+              AND (
+                (:empA > 0 AND i.assignee_type='USER' AND i.empId=:empB)
+                OR (:empC > 0 AND i.assignee_type='DEPARTMENT' AND COALESCE(
+                    d.headEmpId,
+                    (SELECT MIN(legacy_head.empId) FROM department_head legacy_head
+                     WHERE legacy_head.deptId=d.deptId)
+                ) = :empD)
+                OR EXISTS (
+                    SELECT 1 FROM asset_request_allocation allocation
+                    JOIN asset_request_item item ON item.request_item_id=allocation.request_item_id
+                    JOIN asset_request r ON r.request_id=item.request_id
+                    WHERE allocation.issue_id=i.issue_id
+                      AND (
+                        r.requested_by=:userA
+                        OR (:empE > 0 AND (r.requested_for=:empF OR r.receiver_emp_id=:empG))
+                        OR EXISTS (
+                            SELECT 1 FROM asset_request_approval_step step
+                            WHERE step.request_id=r.request_id
+                              AND step.approver_username=:userB
+                              AND step.status IN ('APPROVED','REJECTED')
+                        )
+                      )
+                )
+              )
+            LIMIT 1");
+        $this->db->bind("documentId", $documentId);
+        foreach (["empA", "empB", "empC", "empD", "empE", "empF", "empG"] as $key) {
+            $this->db->bind($key, $employeeId);
+        }
+        $this->db->bind("userA", $username);
+        $this->db->bind("userB", $username);
+        return (bool) $this->db->single();
+    }
+
     public function deleteAsset($assetNum)
     {
         $this->db->query("DELETE FROM assetdata WHERE assetNum = :assetNum");

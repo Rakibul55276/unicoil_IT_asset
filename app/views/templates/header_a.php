@@ -4,6 +4,12 @@
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta charset="utf-8" />
+  <?php
+  if (empty($_SESSION["csrf_master_delete"])) {
+      $_SESSION["csrf_master_delete"] = bin2hex(random_bytes(32));
+  }
+  ?>
+  <meta name="csrf-master-delete" content="<?= htmlspecialchars((string) $_SESSION["csrf_master_delete"], ENT_QUOTES, "UTF-8") ?>" />
   <title><?= htmlspecialchars(
       (string) ($data["title"] ?? "IT Asset Management"),
       ENT_QUOTES,

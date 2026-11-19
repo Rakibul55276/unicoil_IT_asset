@@ -137,6 +137,7 @@ class Department extends Controller
             ["ADMINISTRATOR"],
             "Only an Administrator can delete departments.",
         );
+        $this->requirePostDeleteToken();
         $result = $this->model("Department_model")->deleteData($id);
         if (!empty($result["deleted"])) {
             Flasher::setMessage("Department", "Deleted successfully", "success");

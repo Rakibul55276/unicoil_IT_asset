@@ -45,13 +45,6 @@ class Asset extends Controller
         return in_array("ADMINISTRATOR", $account["roles"] ?? [], true);
     }
 
-    public function getAllDepartments()
-    {
-        $stmt = $this->db->prepare("SELECT deptId, deptName FROM department ORDER BY deptName ASC");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function myAssets()
     {
         if (empty($_SESSION["csrf_my_return_request"])) {
@@ -508,6 +501,10 @@ class Asset extends Controller
 
     public function printHistory($assetNum)
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view asset lifecycle history.",
+        );
         $history = $this->model("Asset_model")->getAssetTransactionHistory($assetNum);
         if (!$history) {
             http_response_code(404);
@@ -519,6 +516,10 @@ class Asset extends Controller
 
     public function printLabel($assetNum)
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view asset labels.",
+        );
         $assetNum = trim(rawurldecode((string) $assetNum));
         if (!preg_match('/^[A-Za-z0-9_-]{1,30}$/', $assetNum)) {
             http_response_code(400);
@@ -626,6 +627,7 @@ class Asset extends Controller
 
     public function printAssignment($issueId)
     {
+        $this->requireTransactionDocumentAccess([(int) $issueId], "ISSUE");
         $record = $this->model("Asset_model")->getAssignmentForm((int) $issueId);
         if (!$record) {
             http_response_code(404);
@@ -655,6 +657,7 @@ class Asset extends Controller
             http_response_code(422);
             exit("A maximum of 8 assignment records can be included in one PDF.");
         }
+        $this->requireTransactionDocumentAccess($ids, "ISSUE");
         $records = [];
         foreach ($ids as $id) {
             $record = $model->getAssignmentForm($id);
@@ -682,6 +685,7 @@ class Asset extends Controller
 
     public function printReturn($returnId)
     {
+        $this->requireTransactionDocumentAccess([(int) $returnId], "RETURN");
         $record = $this->model("Asset_model")->getReturnForm((int) $returnId);
         if (!$record) {
             http_response_code(404);
@@ -704,6 +708,7 @@ class Asset extends Controller
             http_response_code(422);
             exit("A maximum of 8 return records can be included in one PDF.");
         }
+        $this->requireTransactionDocumentAccess($ids, "RETURN");
         $model = $this->model("Asset_model");
         $records = [];
         foreach ($ids as $id) {
@@ -894,6 +899,10 @@ class Asset extends Controller
 
     public function active()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view assigned asset reports.",
+        );
         $data["title"] = "IT Asset - Active Assets";
         $data["menu"] = "Active Assets";
         $data["menu-dsc"] = "List of Active Assets";
@@ -930,6 +939,10 @@ class Asset extends Controller
 
     public function inactive()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view in-stock asset reports.",
+        );
         $data["title"] = "IT Asset - InStock Assets";
         $data["menu"] = "InStock Assets";
         $data["menu-dsc"] = "List of InStock Assets";
@@ -1040,6 +1053,10 @@ class Asset extends Controller
 
     public function auditReport()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the asset audit report.",
+        );
         [$from, $to] = $this->auditDates();
         [$assetNum, $eventType, $category, $department, $search, $actor, $assignedTo, $condition] = $this->auditFilters();
         $workflowUiEnabled = defined("WORKFLOW_UI_ENABLED")
@@ -1103,6 +1120,10 @@ class Asset extends Controller
 
     public function archive()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the scrapped asset archive.",
+        );
         [$from, $to] = $this->auditDates();
         $category = trim($_GET["category"] ?? "");
         $model = $this->model("Asset_model");
@@ -1123,6 +1144,10 @@ class Asset extends Controller
 
     public function exportArchiveExcel()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the scrapped asset archive.",
+        );
         [$from, $to] = $this->auditDates();
         $category = trim($_GET["category"] ?? "");
         $rows = $this->model("Asset_model")->getScrappedArchive($from, $to, $category);
@@ -1166,6 +1191,10 @@ class Asset extends Controller
 
     public function exportArchivePdf()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the scrapped asset archive.",
+        );
         [$from, $to] = $this->auditDates();
         $category = trim($_GET["category"] ?? "");
         $archive = $this->model("Asset_model")->getScrappedArchive($from, $to, $category);
@@ -1198,6 +1227,10 @@ class Asset extends Controller
 
     public function exportAuditExcel()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the asset audit report.",
+        );
         [$from, $to] = $this->auditDates();
         [$assetNum, $eventType, $category, $department, $search, $actor, $assignedTo, $condition] = $this->auditFilters();
         $workflowUiEnabled = defined("WORKFLOW_UI_ENABLED")
@@ -1275,6 +1308,10 @@ class Asset extends Controller
 
     public function exportAuditPdf()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view the asset audit report.",
+        );
         [$from, $to] = $this->auditDates();
         [$assetNum, $eventType, $category, $department, $search, $actor, $assignedTo, $condition] = $this->auditFilters();
         $workflowUiEnabled = defined("WORKFLOW_UI_ENABLED")
@@ -2325,6 +2362,10 @@ class Asset extends Controller
 
     public function returnHistory()
     {
+        $this->requireAssetRole(
+            ["ISSUER", "IT_MANAGER"],
+            "Only an Administrator, Issuer or IT Manager can view return history.",
+        );
         $conditions = ["NEW", "GOOD", "DAMAGED"];
         $types = ["REISSUE", "SCRAP"];
         $sorts = [
@@ -2719,6 +2760,39 @@ class Asset extends Controller
      * Protect sensitive asset routes independently from navigation visibility.
      * The built-in admin username and ADMINISTRATOR role always have full access.
      */
+    /**
+     * Assignment/return documents contain custodian details. Administrators,
+     * Issuers and IT Managers may open any document; every other user may open
+     * only documents for their own custody, a department they head, or an
+     * equipment request they raised, receive, or approved.
+     */
+    private function requireTransactionDocumentAccess(array $ids, string $type): void
+    {
+        $username = (string) ($_SESSION["usr"]["user"] ?? "");
+        $account = $this->model("User_model")->getUserById($username);
+        $isActive = is_array($account) && (int) ($account["active"] ?? 0) === 1;
+        $roles = $isActive ? ($account["roles"] ?? []) : [];
+        if (
+            strtolower($username) === "admin" ||
+            (bool) array_intersect($roles, ["ADMINISTRATOR", "ISSUER", "IT_MANAGER"])
+        ) {
+            return;
+        }
+        $empId = $isActive ? (int) ($account["empId"] ?? 0) : 0;
+        $model = $this->model("Asset_model");
+        foreach ($ids as $id) {
+            $id = (int) $id;
+            if ($id < 1) {
+                continue;
+            }
+            $allowed = $isActive && $model->canAccessTransactionDocument($type, $id, $username, $empId);
+            if (!$allowed) {
+                http_response_code(403);
+                exit("You do not have permission to open this transaction document.");
+            }
+        }
+    }
+
     private function requireAssetRole(
         array $allowedRoles,
         string $message,

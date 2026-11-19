@@ -17,6 +17,29 @@ class Controller
      * Enforce backend authorization independently from navigation visibility.
      * Hiding a menu item is never treated as an access-control decision.
      */
+    /**
+     * Master-data deletes must be POST requests carrying the shared delete token
+     * rendered by the authenticated layout. A plain link (GET) can no longer
+     * delete records, which closes cross-site request forgery through links.
+     */
+    protected function requirePostDeleteToken(): void
+    {
+        if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
+            http_response_code(405);
+            exit("Method not allowed.");
+        }
+        if (
+            empty($_SESSION["csrf_master_delete"]) ||
+            !hash_equals(
+                (string) $_SESSION["csrf_master_delete"],
+                (string) ($_POST["csrf_token"] ?? ""),
+            )
+        ) {
+            http_response_code(419);
+            exit("The delete form expired. Refresh the page and try again.");
+        }
+    }
+
     protected function requireRoles(array $allowedRoles, string $message): void
     {
         $username = trim((string) ($_SESSION["usr"]["user"] ?? ""));

@@ -114,6 +114,7 @@ class Unit extends Controller
             ["ADMINISTRATOR"],
             "Only an Administrator can delete asset units.",
         );
+        $this->requirePostDeleteToken();
         if ($this->model("Unit_model")->deleteData($id) > 0) {
             Flasher::setMessage("Unit Successfully", "Deleted", "success");
             header("location: " . BASEURL . "/Unit");

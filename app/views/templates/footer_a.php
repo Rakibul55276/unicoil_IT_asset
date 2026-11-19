@@ -322,6 +322,33 @@ window.__oldFormInput = <?= Flasher::pullOldInputJson() ?>;
     });
   })
 </script>
+<script>
+  // Legacy master-data delete links are submitted as POST with the shared
+  // token. Each link's own confirm() runs first; a cancelled confirm stops here.
+  (function () {
+    var selector = 'a[href*="/Department/hapusData/"],a[href*="/Employee/hapusData/"],' +
+      'a[href*="/Unit/hapusData/"],a[href*="/Location/delete/"]';
+    document.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest ? event.target.closest(selector) : null;
+      if (!link || event.defaultPrevented) {
+        return;
+      }
+      event.preventDefault();
+      var meta = document.querySelector('meta[name="csrf-master-delete"]');
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = link.href;
+      form.style.display = 'none';
+      var token = document.createElement('input');
+      token.type = 'hidden';
+      token.name = 'csrf_token';
+      token.value = meta ? meta.getAttribute('content') : '';
+      form.appendChild(token);
+      document.body.appendChild(form);
+      form.submit();
+    });
+  })();
+</script>
 </body>
 
 </html>
